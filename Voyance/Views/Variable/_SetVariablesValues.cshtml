@@ -1,0 +1,105 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+
+<div id="placeholderSetVariable">
+    <div class="nav nav-tabs nav-fill mb-3" id="nav-tab" role="tablist">
+        @foreach (EnvironnementVM environnement in ViewBag.ListEnvironnement)
+        {
+        <a class="nav-item nav-link envMenu" id="nav-rights-tab-@environnement.Id" data-toggle="tab" href="#nav-rights" role="tab" aria-controls="nav-rights" onclick="FilterDataTableByEnvId(@environnement.Id)">@environnement.Label</a>
+        }
+    </div>
+    <div class="row ml-2">
+        <div class="col-12">
+            <div class="row mb-3">
+                <div class="col-5">
+                    Destination :
+                    <select class="form-control">
+                        <option value="1">GCL</option>
+                        <option value="2">appsettings.json</option>
+                        <option value="3">web.config</option>
+                    </select>
+                </div>
+            </div>
+            <input type="button" class="btn btn-primary mb-3" value="Créer une variable" onclick="addNewRow()" />
+            <div class="tab-content" id="nav-tabContent">
+                <table id="SetVariableDatatable" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Token</th>
+                            <th>Valeur</th>
+                        </tr>
+                    </thead>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="placeholderCreateVariable" style="display:none">
+    <partial name="~/Views/Variable/_CreateVariables.cshtml" />
+</div>
+
+<script>
+    var configFilesVariable;
+    $(document).ready(function () {
+        $('#SetVariableDatatable').DataTable(
+            {
+                "language": {
+                    url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+                },
+                "ajax": {
+                    "url": "Variable/GetAllVariables",
+                    "type": "GET",
+                    "datatype": "json"
+                },
+                "processing": true,
+                "filter": true,
+                "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [1],
+                    "sorting": true,
+                    "searchable": true
+
+                },
+                {
+                    "targets": [2],
+                    "sorting": false,
+                    "searchable": false
+                }
+                ],
+                "columns": [
+                    { "data": "id", "autoWidth": true },
+                    {
+                        data: "token",
+                        name: "token",
+                        render: function (data, type, row, meta) {
+                            let disabled;
+                            disabled = data !== "" ? "disabled" : "";
+                            return '<input type="text" class="editor-active ' + meta.row + "-" + meta.col + '" value="' + data + '" ' + disabled + '>';
+                        },
+                        className: "dt-body-center"
+                    },
+                    {
+                        data: "value",
+                        name: "value",
+                        render: function (data, type, row, meta) {
+                            return '<input type="text" class="editor-active ' + meta.row + "-" + meta.col + '">';
+                        },
+                        className: "dt-body-center"
+                    },
+                ]
+            });
+    });
+
+    function addNewRow() {
+        $('#placeholderCreateVariable').show();
+        $('#placeholderSetVariable').hide(); //.DataTable().row.add({ "id": 0, "token": "", "value": "" }).draw();
+        $('#submitForm').prop("disabled", true);
+        $('#closeModal').prop("disabled", true);
+    }
+</script>

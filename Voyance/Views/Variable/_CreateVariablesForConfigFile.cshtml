@@ -1,0 +1,110 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    int count = 0;
+}
+@*@model List<ConfigFilesVM>*@
+<div class="row">
+    <div class="col-4">
+        <div class="list-group" id="listTabConfigFiles" role="tablist">
+
+        </div>
+    </div>
+    <div class="col-8">
+        <div class="tab-content" id="nav-tabContent" style="visibility: hidden;">
+            <table id="SetVariableDatatable" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>Id</th>
+                        <th>Token</th>
+                        <th>Valeur</th>
+                    </tr>
+                </thead>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    var configFilesVariable;
+    $(document).ready(function () {
+        $('#SetVariableDatatable').DataTable(
+        {
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            },
+            "processing": true,
+            "filter": true,
+              "columnDefs": [{
+                  "targets": [0],
+                  "visible": false,
+                  "searchable": false
+              },
+              {
+                  "targets": [1],
+                  "sorting": true,
+                  "searchable": true
+
+              },
+              {
+                  "targets": [2],
+                  "sorting": false,
+                  "searchable": false
+              }
+              ],
+            "columns": [
+                { "data": "id",  "autoWidth": true },
+                { "data": "token", "autoWidth": true },
+                { "data": "value", "autoWidth": true },
+            ]
+        });
+    });
+
+    function loadVariableGrid() {
+        if ($('#listTabConfigFiles').children().length === 0) {
+            let rightsDataTable = $('#@ViewData["GridNameConfigFiles"]');
+            let datas = rightsDataTable.DataTable().rows().data();
+            let ids = [];
+            for (var i = 0; i < datas.length; i++) {
+                addItemInConfigFileList(datas[i]);
+                ids.push(datas[i].id);
+            }
+
+            if (ids.length > 0) {
+                $.ajax({
+                    url: "@Url.Action("GetVariableByIdConfigFile", "Variable")",
+                    method: 'get',
+                    data: ids,
+                    success: function (variable) {
+                        configFilesVariable = variable;
+                    }
+                });
+
+            }
+        }
+    }
+
+    function addItemInConfigFileList(data) {
+        let lineNumber = $('#listTabConfigFiles .list-group-item').length + 1;
+        let fullName = data.fullName;
+        if (!fullName) fullName = data.path + "/" + data.fileName + "." + data.extension
+        let newLine = "<a class=\"list-group-item list-group-item-action\" id=\"configFile" + lineNumber + "\" data-id=\"" + data.id + "\" "+
+            "data-toggle=\"list\" data-number=\"" + lineNumber + "\"  onclick=\"drawDatatableConfigFile(" + lineNumber + ")\" role=\"tab\"> " + fullName + "</a> ";
+        $('#listTabConfigFiles').append(newLine);
+    }
+
+    function drawDatatableConfigFile(lineNumber) {
+        $('#SetVariableDatatable').css('visibility','visible');
+        if (configFilesVariable && configFilesVariable.length > 0) {
+            let data = $.grep(configFilesVariable, function (configFile) {
+                return configFile.lineIdentifier == lineNumber;
+            });
+            let datatable = $('#SetVariableDatatable').DataTable();
+            datatable.clear().draw();
+            datatable.rows.add(data[0].listVariable); // Add new data
+            datatable.columns.adjust().draw(); // Redraw the DataTable
+        }
+    }
+
+</script>

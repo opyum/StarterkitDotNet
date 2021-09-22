@@ -1,0 +1,163 @@
+﻿@{
+    ViewData["Title"] = "Liste des Infrastructures";
+}
+
+<div class="container">
+    <div>
+        <h1>Liste des Infrastructures</h1>
+        <div>
+            <button class="btn btn-info mb-3" value="Créer Infrastructure" onclick="OpenInfrastructurePopUp()">
+                <i class="bi bi-plus-circle-fill"></i> Créer Infrastructure
+            </button>
+        </div>
+        <table id="InfrastructureDatatable" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Label</th>
+                    <th>Crée le</th>
+                    <th>Crée par</th>
+                    <th>Date dernière modif</th>
+                    <th>Modifié par</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+        </table>
+    </div>
+</div>
+<div id="modal-placeholder"></div>
+<script>
+    $(document).ready(function() {
+        $("#InfrastructureDatatable").DataTable({
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            },
+            "processing": true, // for show progress bar
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": true, // for disable multiple column at once
+            "ajax": {
+                "url": "Infrastructure/GetAllInfrastructure",
+                "type": "GET",
+                "datatype": "json"
+            },
+            "columnDefs": [{
+                    "targets": [0],
+                    "visible": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [1],
+                    "sorting": true,
+                    "searchable": true
+
+                },
+                {
+                    "targets": [2],
+                    "sorting": true,
+                    "searchable": false
+                },
+                {
+                    "targets": [3],
+                    "sorting": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [4],
+                    "sorting": false,
+                    "searchable": false
+                },
+                {
+                    "targets": [5],
+                    "sorting": false,
+                    "searchable": false
+                },
+            ],
+            "columns": [
+                { "data": "id", "autoWidth": true },
+                { "data": "label", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        let date = new Date(full.createdDateTime);
+                        return date.toLocaleString();
+                    }
+                },
+                { "data": "createdBy", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        let date = new Date(full.modifiedDateTime);
+                        return date.toLocaleString();
+                    }
+                },
+                { "data": "modifiedBy", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        let buttons = "";
+                        //if ("@User.CanAccess("InfrastructurehowHisto")" == "True")
+                            buttons += '<i class="bi bi-eye-fill" data-toggle="tooltip" title="Voir l\'historique" onclick="ShowHisto(' + full.idGroup + ');"></i> ';
+
+                        //if ("@User.CanAccess("InfrastructureCreate")" == "True")
+                            buttons += '<i class="bi bi-pen-fill" data-toggle="tooltip" title="Modifier" onclick="OpenInfrastructurePopUp(' + full.id + ');"></i> ';
+
+                        //if ("@User.CanAccess("InfrastructureDelete")" == "True")
+                            buttons += '<i class="bi bi-x-octagon-fill" data-toggle="tooltip" title="Supprimer" onclick="DeleteInfrastructureMessage(' + full.id + ',\'' + full.label + '\');"></i> ';
+
+                        //if ("@User.CanAccess("InfrastructureClone")" == "True")
+                            buttons += '<i class="bi bi-stack" data-toggle="tooltip" title="Cloner" onclick="Clone(' + full.id + ');"></i> ';
+
+                        return buttons;
+                        }
+                },
+            ]
+
+        });
+    });
+
+    function ShowHisto(idGroup) {
+        $.ajax({
+            url: "@Url.Action("OpenInfrastructureHistoPopup", "Infrastructure")",
+            method: 'get',
+            data: { "idGroup": idGroup },
+            contentType: "json",
+            success: function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            }
+        })
+    }
+
+function DeleteInfrastructureMessage(id, label) {
+    if (confirm("Êtes-vous sur de vouloir supprimer (logiquement) " + label + " ?")) {
+        DeleteInfrastructure(id);
+    } else {
+        return false;
+    }
+}
+
+
+    function DeleteInfrastructure(id) {
+        $.ajax({
+            url: "@Url.Action("DeleteInfrastructure", "Infrastructure")",
+            method: 'delete',
+            data: { "id": id },
+            success: function (data) {
+                showNotifMessageObject(data);
+                $('#InfrastructureDatatable').DataTable().ajax.reload();
+
+            }
+        });
+    }
+
+    function OpenInfrastructurePopUp(id) {
+        $.ajax({
+            url: "@Url.Action("OpenInfrastructurePopup", "Infrastructure")",
+            method: 'get',
+            data: { "id": id },
+            contentType: "json",
+            success: function (data) {
+                $('#modal-placeholder').html(data);
+                $('#modal-placeholder > .modal').modal('show');
+            }
+        })
+    }
+
+</script>

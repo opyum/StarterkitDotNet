@@ -1,0 +1,159 @@
+﻿@model int
+<!-- Ajout tableau-->
+<button type="button" class="btn btn-info mb-3" id="addConfigFile" onclick="showDivAddNewConfigFile()">Ajouter un fichier de configuration</button>
+<table id="SetConfigFilesDatatable" class="table table-striped table-bordered dt-responsive nowrap" width="100%" cellspacing="0">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Path</th>
+            <th>FileName</th>
+            <th>Extension</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+</table>
+<div id="divAddNewConfigFile" class="col-12" style="display:none">
+    @*<form id="form" name="form" action="Index"  enctype="multipart/form-data" method="post">
+        <div class="buttons">
+            <div class="upload-button">
+                <div class="label">Importer f</div>
+                <input id="files" class="btn btn-info" name="files" type="file" size="1" multiple onchange="uploadFiles('files');" />
+            </div>
+        </div>
+    </form>*@
+
+    <form id="foVoyanceFile">
+        <input type="hidden" id="Id" name="id" value="0" />
+        <div class="form-group">
+            <label for="Path">Path : </label>
+            <input type="text" id="Path" name="path" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="FileName">Nom du fichier : </label>
+            <input type="text" id="FileName" name="fileName" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label for="Extension">Extension : </label>
+            <input type="text" id="Extension" name="extension" class="form-control" required />
+        </div>
+        <button type="button" class="btn btn-info" id="addNewLineConfigFile" onclick="addNewConfigFileInGrid()">Ajouter</button>
+    </form>
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        $("#SetConfigFilesDatatable").DataTable({
+            "language": {
+                url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/French.json'
+            },
+            "processing": true,
+            "filter": true,
+            "initComplete": function (settings, json) {
+                loadVariableGrid();//Une fois la grille chargée, on va mettre à jour l'onglet des variables
+            },
+            "ajax": {
+                "url": "@Url.Action("GetConfigFilesByIdAppli", "ConfigFiles")?idAppli=" + @Model,
+                "type": "GET",
+                "datatype": "json"
+            },
+            "columnDefs": [{
+                  "targets": [0],
+                  "visible": false,
+                  "searchable": false
+              },
+              {
+                  "targets": [1],
+                  "sorting": true,
+                  "searchable": true
+
+              },
+              {
+                  "targets": [2],
+                  "sorting": false,
+                  "searchable": false
+              },
+              {
+                  "targets": [3],
+                  "sorting": false,
+                  "searchable": false
+                }
+              ],
+            "columns": [
+                { "data": "id" },
+                { "data": "path", "autoWidth": true },
+                { "data": "fileName", "autoWidth": true },
+                { "data": "extension", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        return '<i class="bi bi-pen-fill" data-toggle="tooltip" title="Modifier" onclick="openConfigFilePopUp(' + full.id + ');"></i> ' +
+                                '<i class="bi bi-x-octagon-fill" data-toggle="tooltip" title="Supprimer" onclick="deleteConfigFileMessage(' + full.id + ',\'' + full.fullName + '\');"></i> ';
+                    }
+                },
+            ],
+        });
+    });
+
+    function openConfigFilePopUp(id) {
+
+    }
+    function deleteConfigFileMessage(id, label) {
+    if (confirm("Êtes-vous sur de vouloir supprimer : " + label + " ?")) {
+        deleteConfigFile(id);
+    } else {
+        return false;
+    }
+}
+
+
+    function deleteConfigFile(id) {
+        $.ajax({
+            url: "@Url.Action("Delete", "ConfigFiles")",
+            method: 'delete',
+            data: { "id": id },
+            success: function (data) {
+                showNotifMessageObject(data);
+            }
+        });
+    }
+
+    function showDivAddNewConfigFile() {
+        $('#divAddNewConfigFile').show();
+    }
+
+    function addNewConfigFileInGrid(data) {
+        var table = $('#SetConfigFilesDatatable').DataTable();
+        if (!data) data = objectifyForm('foVoyanceFile');
+        table.row.add(data).draw();
+        //Ajout d'une ligne dans la gestion des variables
+        addItemInConfigFileList(data);
+        $('#foVoyanceFile')[0].reset();
+        $('#divAddNewConfigFile').hide();
+    }
+
+    function uploadFiles(inputId) {
+        var input = document.getElementById(inputId);
+        var files = input.files;
+        var formData = new FormData();
+
+        for (var i = 0; i != files.length; i++) {
+            formData.append("files", files[i]);
+        }
+
+        $.ajax(
+            {
+                url: "@Url.Action("Index", "ConfigFiles")",
+                data: formData,
+                processData: false,
+                contentType: false,
+                type: "POST",
+                success: function (data) {
+                    var table = $('#SetConfigFilesDatatable').DataTable();
+                    for (var i = 0; i < data.data.length; i++) {
+                        addNewConfigFileInGrid(data.data[i])
+                    }
+
+                }
+            }
+        );
+    }
+</script>

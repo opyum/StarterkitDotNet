@@ -1,0 +1,96 @@
+﻿<!-- Modal -->
+@model InfrastructureVM
+
+@{
+    ViewData["GridNameConfigFiles"] = "SetConfigFilesDatatable";
+}
+<div class="modal fade" id="createUpdateModal" tabindex="-1" role="dialog" aria-labelledby="updatePopupTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content" id="modalContent">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updatePopupTitle">@ViewBag.Title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <nav>
+                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                    <a class="nav-item nav-link active" id="nav-general-tab" data-toggle="tab" href="#nav-general" role="tab" aria-controls="nav-general" aria-selected="true">Général</a>
+                    @*<a class="nav-item nav-link" id="nav-rights-tab" data-toggle="tab" href="#nav-rights" role="tab" aria-controls="nav-rights" aria-selected="false" onclick="loadRights()">Gestion des droits</a>*@
+                    <a class="nav-item nav-link" id="nav-variable-tab" data-toggle="tab" href="#nav-variable" role="tab" aria-controls="nav-variable" aria-selected="false" onclick="loadVariableGrid()">Variables</a>
+                </div>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-general" role="tabpanel" aria-labelledby="nav-general-tab">
+                    <form id="createUpdateInfrastructureForm">
+                        <div asp-validation-summary="All" class="text-danger"></div>
+                        @Html.HiddenFor(x => x.Id)
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label asp-for="Label" class="control-label"></label>
+                                <input asp-for="Label" class="form-control" />
+                                <span asp-validation-for="Label" class="text-danger"></span>
+                            </div>
+                        </div>
+                        @Html.HiddenFor(x => x.CreatedDateTime)
+                        @Html.HiddenFor(x => x.CreatedBy)
+                        @Html.HiddenFor(x => x.ModifiedDateTime)
+                        @Html.HiddenFor(x => x.ModifiedBy)
+                        <input type="hidden" asp-for="IsActive" value="true" />
+                        @Html.HiddenFor(x => x.IdGroup)
+
+                    </form>
+                        @*<partial name="_CreateConfigFiles.cshtml" for="Id" />*@
+                </div>
+                @* On ne gère pas les droits directement dans l'Infrastructure mais plutôt dans une partie "admin"
+                    <div class="tab-pane fade mb-3" id="nav-rights" role="tabpanel" aria-labelledby="nav-rights-tab">
+                    <div id="placeholderRights"></div>
+                </div>*@
+                @*<div class="tab-pane fade mb-3" id="nav-variable" role="tabpanel" aria-labelledby="nav-variable-tab">
+                    <partial name="~/Views/Variable/_CreateVariablesForConfigFile.cshtml" view-data="ViewData" />
+                </div>*@
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fermer</button>
+                    <button type="button" class="btn btn-primary" id="submitForm">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $('#submitForm').click(function (e) {
+        e.preventDefault();
+        let InfrastructureData = objectifyForm('createUpdateInfrastructureForm');
+        let postData = { "vm": InfrastructureData };
+        $.ajax({
+            url: "@Url.Action("PostInfrastructure", "Infrastructure")",
+            method: 'post',
+            datatype: "json",
+            data: postData,
+            success: function (data) {
+                showNotifMessageObject(data)
+                if (data.severity != ERROR) {
+                    $('#createUpdateModal').modal('hide');
+                    $('#InfrastructureDatatable').DataTable().ajax.reload();
+                }
+            }
+        });
+    });
+
+    function loadRights()
+    {
+        if ($('#placeholderRights').children().length === 0)
+        $.ajax({
+            url: "@Url.Action("PartialSetSpecificsRights", "Rights")",
+            method: 'get',
+            data: {"id": 1, "entityType": 1 },//TODO enlever le bouchon
+            success: function (data) {
+                $('#placeholderRights').html(data);
+            }
+        });
+    }
+</script>
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
