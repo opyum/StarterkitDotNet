@@ -6,13 +6,13 @@ using System.Text;
 using AutoMapper;
 using DataAccessLayer.Entity;
 
-namespace VoyanceApi.Profile
+namespace StarterKitAPI.Profile
 {
     public class UserProfile : AutoMapper.Profile
     {
         public UserProfile()
         {
-            CreateMap<User, UserDTO>()
+            CreateMap<Personne, PersonneDTO>()
                 .ForMember(dest => dest.Id, source => source.MapFrom(x => x.Id))
                 .ReverseMap();
         }

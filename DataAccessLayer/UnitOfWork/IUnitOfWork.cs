@@ -14,7 +14,7 @@ namespace DataAccessLayer.UnifOfWork
         /// Gets the db context.
         /// </summary>
         /// <returns>The instance of type TContext.</returns>
-        VoyanceContext DbContext { get; }
+        SqliteContext DbContext { get; }
 
         /// <summary>
         /// Gets the specified repository for the TEntity.

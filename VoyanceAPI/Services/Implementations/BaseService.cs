@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using DataAccessLayer.UnifOfWork;
 
-namespace VoyanceApi.Services
+namespace StarterKitAPI.Services
 {
     public class BaseService
     {

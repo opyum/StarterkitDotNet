@@ -1,6 +1,6 @@
 ﻿{
    "CodeGenerationMode": 0,
-   "ContextClassName": "VoyanceContext",
+   "ContextClassName": "SqliteContext",
    "ContextNamespace": null,
    "DefaultDacpacSchema": null,
    "FilterSchemas": false,
@@ -14,15 +14,15 @@
    "SelectedToBeGenerated": 0,
    "Tables": [
       {
-         "Name": "[dbo].[Login]",
+         "Name": "Adresse",
          "ObjectType": 0
       },
       {
-         "Name": "[dbo].[User]",
+         "Name": "Personne",
          "ObjectType": 0
       }
    ],
-   "UiHint": "LAPTOP-TCRHB73M.Voyance",
+   "UiHint": "dbtest",
    "UseBoolPropertiesWithoutDefaultSql": false,
    "UseDatabaseNames": false,
    "UseDbContextSplitting": false,
@@ -31,6 +31,7 @@
    "UseInflector": false,
    "UseLegacyPluralizer": false,
    "UseNoConstructor": false,
+   "UseNoDefaultConstructor": false,
    "UseNoNavigations": false,
    "UseNoObjectFilter": false,
    "UseNodaTime": false,

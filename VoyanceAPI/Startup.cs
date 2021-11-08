@@ -1,30 +1,16 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using VoyanceApi.Profile;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using VoyanceApi.Injection;
-using DataAccessLayer.UnifOfWork;
-using VoyanceApi.Services;
+using StarterKitAPI.Profile;
+using StarterKitAPI.Middleware;
+using Microsoft.Identity.Web;
+using System.Data.SQLite;
 using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
-using VoyanceApi.Middleware;
-using Microsoft.Identity.Web;
-using Microsoft.AspNetCore.Http;
-using System.IdentityModel.Tokens.Jwt;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
-using AutoMapper;
 
-namespace VoyanceApi
+namespace StarterKitAPI
 {
     public class Startup
     {
@@ -39,20 +25,12 @@ namespace VoyanceApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            services.AddSwaggerGen();
 
-            services.AddMicrosoftIdentityWebApiAuthentication(Configuration);
-            services.AddHttpContextAccessor();
-            services.AddControllers(options =>
-            {
-                var policy = new AuthorizationPolicyBuilder()
-                    .RequireAuthenticatedUser()
-                    .Build();
-                options.Filters.Add(new AuthorizeFilter(policy));
-            });
-
-            services.AddDbContext<VoyanceContext>(options =>
-             options.UseSqlServer("Data Source=.;Initial Catalog=Voyance;Integrated Security=True"));
+            //services.AddDbContext<SqliteContext>(options =>
+            // options.UseSqlite(Configuration.GetConnectionString("CnxString")));
+            services.AddEntityFrameworkSqlite().AddDbContext<SqliteContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("CnxString")));
 
             services.AddAutoMapper(typeof(UserProfile));
 
@@ -69,22 +47,18 @@ namespace VoyanceApi
                 app.UseDeveloperExceptionPage();
             }
             app.UseRequestResponseLogging();
+
+            // Enable middleware to serve generated Swagger as a JSON endpoint.
+            app.UseSwagger();
+
+            // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.)
+            app.UseSwaggerUI();
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.Use(async (context, next) =>
-            //{
-            //    if (!context.User.Identity?.IsAuthenticated ?? false)
-            //    {
-            //        context.Response.StatusCode = 401;
-            //        await context.Response.WriteAsync("Not Authenticated");
-            //    }
-            //    else await next();
-
-            //});
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

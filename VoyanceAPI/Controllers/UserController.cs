@@ -3,25 +3,25 @@ using DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using VoyanceApi.Services;
+using StarterKitAPI.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace VoyanceApi.Controllers
+namespace StarterKitAPI.Controllers
 {
     [Authorize]
     [ApiController]
     [Route(ApiRouteConst.LOGIN_CONTROLLER)]
-    public class LoginController : ControllerBase
+    public class PersonneController : ControllerBase
     {
-        private readonly ILogger<LoginController> _logger;
+        private readonly ILogger<PersonneController> _logger;
 
-        private ILoginService UserService;
+        private IPersonneService UserService;
 
-        public LoginController(ILogger<LoginController> logger, ILoginService service)
+        public PersonneController(ILogger<PersonneController> logger, IPersonneService service)
         {
             _logger = logger;
             UserService = service;
@@ -29,29 +29,22 @@ namespace VoyanceApi.Controllers
 
         [HttpGet]
         [Route(ApiRouteConst.GENERIC_GET_ALL)]
-        public IEnumerable<UserDTO> GetAll()
+        public IEnumerable<PersonneDTO> GetAll()
         {
 
             return UserService.GetAll();
         }
 
         [HttpGet]
-        [Route(ApiRouteConst.USER_CONTROLLER_GET_ALL_WITH_ROLE)]
-        public void GetAllWithRole(int idRole)
-        {
-            UserService.GetAllWithRole(idRole);
-        }
-
-        [HttpGet]
         [Route(ApiRouteConst.GENERIC_GET_BY_ID)]
-        public UserDTO GetById(int id)
+        public PersonneDTO GetById(int id)
         {
             return UserService.GetById(id);
         }
 
         [HttpPost]
         [Route(ApiRouteConst.GENERIC_CREATE)]
-        public void Create(UserDTO User)
+        public void Create(PersonneDTO User)
         {
             UserService.Create(User);
         }     
@@ -60,7 +53,7 @@ namespace VoyanceApi.Controllers
 
         [HttpPut]
         [Route(ApiRouteConst.GENERIC_UPDATE)]
-        public void Update(UserDTO dto)
+        public void Update(PersonneDTO dto)
         {
              UserService.Update(dto);
         }

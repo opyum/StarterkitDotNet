@@ -1,5 +1,4 @@
 ﻿using Commun.Constantes;
-using Commun.Enums;
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;

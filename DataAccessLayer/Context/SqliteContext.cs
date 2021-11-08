@@ -8,25 +8,28 @@ using DataAccessLayer.Entity;
 
 namespace DataAccessLayer.Context
 {
-    public partial class VoyanceContext : DbContext
+    public partial class SqliteContext : DbContext
     {
-        public VoyanceContext()
+        public SqliteContext()
         {
         }
 
-        public VoyanceContext(DbContextOptions<VoyanceContext> options)
+        public SqliteContext(DbContextOptions<SqliteContext> options)
             : base(options)
         {
         }
 
-        public virtual DbSet<Login> Login { get; set; }
-        public virtual DbSet<User> User { get; set; }
+        public virtual DbSet<Adresse> Adresse { get; set; }
+        public virtual DbSet<Personne> Personne { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("Relational:Collation", "French_CI_AS");
+            modelBuilder.Entity<Adresse>(entity =>
+            {
+                entity.Property(e => e.Id).ValueGeneratedNever();
+            });
 
-            modelBuilder.Entity<Login>(entity =>
+            modelBuilder.Entity<Personne>(entity =>
             {
                 entity.Property(e => e.Id).ValueGeneratedNever();
             });

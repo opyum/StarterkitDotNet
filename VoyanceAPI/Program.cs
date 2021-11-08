@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace VoyanceApi
+namespace StarterKitAPI
 {
     public class Program
     {

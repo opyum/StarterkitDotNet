@@ -9,7 +9,7 @@ namespace DataAccessLayer.UnifOfWork
 {
     public class UnitOfWork : IUnitOfWork
     {
-        private readonly VoyanceContext _context;
+        private readonly SqliteContext _context;
         private bool disposed = false;
         private Dictionary<Type, object> _repositories;
 
@@ -17,12 +17,12 @@ namespace DataAccessLayer.UnifOfWork
         /// Initializes a new instance of the UnitOfWork<TContext>.
         /// </summary>
         /// <param name="context">The context.</param>
-        public UnitOfWork(VoyanceContext context)
+        public UnitOfWork(SqliteContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public VoyanceContext DbContext => _context;
+        public SqliteContext DbContext => _context;
 
         public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {

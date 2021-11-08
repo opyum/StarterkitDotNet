@@ -9,14 +9,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DataAccessLayer.Entity
 {
-    [Keyless]
-    public partial class User
+    public partial class Personne
     {
-        public int? Id { get; set; }
-        [StringLength(200)]
+        [Key]
+        public long Id { get; set; }
+        [Column(TypeName = "VARCHAR (50)")]
         public string Nom { get; set; }
-        [StringLength(200)]
+        [Column(TypeName = "VARCHAR (50)")]
         public string Prenom { get; set; }
-        public int? Age { get; set; }
+        public long? IdAdresse { get; set; }
+
+        [ForeignKey(nameof(IdAdresse))]
+        [InverseProperty(nameof(Adresse.Personne))]
+        public virtual Adresse IdAdresseNavigation { get; set; }
     }
 }
