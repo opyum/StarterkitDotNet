@@ -4,9 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using StarterKitAPI.Profile;
-using StarterKitAPI.Middleware;
 using Microsoft.Identity.Web;
-using System.Data.SQLite;
 using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -25,18 +23,20 @@ namespace StarterKitAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSwaggerGen();
+            services.AddMvc();
 
             //services.AddDbContext<SqliteContext>(options =>
             // options.UseSqlite(Configuration.GetConnectionString("CnxString")));
             services.AddEntityFrameworkSqlite().AddDbContext<SqliteContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("CnxString")));
+                options.UseSqlite(Configuration.GetConnectionString("bdd")));
 
-            services.AddAutoMapper(typeof(UserProfile));
+            services.AddAutoMapper(typeof(PersonneProfile));
 
             //var serviceProvider = services.BuildServiceProvider();
             //this.applicationService = serviceProvider.GetService<IApplicationService>();
             Injection.Injection.SetInjection(services);
+            services.AddSwaggerGen();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -46,7 +46,7 @@ namespace StarterKitAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            app.UseRequestResponseLogging();
+            //app.UseRequestResponseLogging();
 
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
@@ -57,8 +57,8 @@ namespace StarterKitAPI
 
             app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseAuthorization();
+            //app.UseAuthentication();
+            //app.UseAuthorization();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();

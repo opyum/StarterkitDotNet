@@ -8,12 +8,11 @@ using DataAccessLayer.Entity;
 
 namespace StarterKitAPI.Profile
 {
-    public class UserProfile : AutoMapper.Profile
+    public class PersonneProfile : AutoMapper.Profile
     {
-        public UserProfile()
+        public PersonneProfile()
         {
             CreateMap<Personne, PersonneDTO>()
-                .ForMember(dest => dest.Id, source => source.MapFrom(x => x.Id))
                 .ReverseMap();
         }
     }

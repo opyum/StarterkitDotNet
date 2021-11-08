@@ -4,26 +4,20 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using StarterKitAPI.Services;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Threading.Tasks;
 
 namespace StarterKitAPI.Controllers
 {
-    [Authorize]
+    [AllowAnonymous]
     [ApiController]
     [Route(ApiRouteConst.LOGIN_CONTROLLER)]
     public class PersonneController : ControllerBase
     {
-        private readonly ILogger<PersonneController> _logger;
 
         private IPersonneService UserService;
 
-        public PersonneController(ILogger<PersonneController> logger, IPersonneService service)
+        public PersonneController(IPersonneService service)
         {
-            _logger = logger;
             UserService = service;
         }
 

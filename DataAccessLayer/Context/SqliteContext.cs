@@ -3,8 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using DataAccessLayer.Entity;
-
-#nullable disable
+using SQLitePCL;
 
 namespace DataAccessLayer.Context
 {
