@@ -29,7 +29,6 @@ namespace StarterKitAPI
             // options.UseSqlite(Configuration.GetConnectionString("CnxString")));
             services.AddEntityFrameworkSqlite().AddDbContext<SqliteContext>(options =>
                 options.UseSqlite(Configuration.GetConnectionString("bdd")));
-
             services.AddAutoMapper(typeof(PersonneProfile));
 
             //var serviceProvider = services.BuildServiceProvider();
@@ -56,7 +55,11 @@ namespace StarterKitAPI
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
+            {
+                var context = serviceScope.ServiceProvider.GetRequiredService<SqliteContext>();
+                context.Database.EnsureCreated();
+            }
             //app.UseAuthentication();
             //app.UseAuthorization();
             app.UseEndpoints(endpoints =>

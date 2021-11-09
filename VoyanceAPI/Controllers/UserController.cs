@@ -38,9 +38,10 @@ namespace StarterKitAPI.Controllers
 
         [HttpPost]
         [Route(ApiRouteConst.GENERIC_CREATE)]
-        public void Create(PersonneDTO User)
+        public IActionResult Create(PersonneDTO User)
         {
             UserService.Create(User);
+            return Ok();
         }     
         
         
