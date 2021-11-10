@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.Context;
+﻿using Commun.Enums;
+using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -7,9 +8,9 @@ using System.Text;
 
 namespace DataAccessLayer.UnifOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork<TContext> : IUnitOfWork<TContext> where TContext : DbContext
     {
-        private readonly SqliteContext _context;
+        private readonly TContext _context;
         private bool disposed = false;
         private Dictionary<Type, object> _repositories;
 
@@ -17,12 +18,12 @@ namespace DataAccessLayer.UnifOfWork
         /// Initializes a new instance of the UnitOfWork<TContext>.
         /// </summary>
         /// <param name="context">The context.</param>
-        public UnitOfWork(SqliteContext context)
+        public UnitOfWork(TContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public SqliteContext DbContext => _context;
+        public TContext DbContext => _context;
 
         public IGenericRepository<TEntity> GetRepository<TEntity>() where TEntity : class
         {

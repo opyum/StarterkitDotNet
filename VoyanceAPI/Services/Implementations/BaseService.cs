@@ -1,16 +1,19 @@
 ﻿using AutoMapper;
+using DataAccessLayer.Context;
 using DataAccessLayer.UnifOfWork;
 
 namespace StarterKitAPI.Services
 {
     public class BaseService
     {
-        public IUnitOfWork unitOfWork { get; set; }
+        public IUnitOfWork<SqliteContext> unitOfWorkSqlite { get; set; }
+        public IUnitOfWork<LogContext> unitOfWorkLog { get; set; }
         protected readonly IMapper _mapper;
 
-        public BaseService(IUnitOfWork uow, IMapper mapper)
+        public BaseService(IUnitOfWork<SqliteContext> uow, IUnitOfWork<LogContext> logUnitOfWork, IMapper mapper)
         {
-            unitOfWork = uow;
+            unitOfWorkSqlite = uow;
+            unitOfWorkLog = logUnitOfWork;
             _mapper = mapper;
         }
 

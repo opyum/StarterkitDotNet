@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DataAccessLayer;
+using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
 using DataAccessLayer.UnifOfWork;
 using DTOs;
@@ -13,16 +14,20 @@ using System.Linq;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Threading;
 
 namespace StarterKitAPI.Services
 {
     public class PersonneService : BaseService, IPersonneService
     {
         private IGenericRepository<Personne> _personneRepo { get; set; }
+        private IGenericRepository<Log> _logRepo { get; set; }
 
-        public PersonneService(IUnitOfWork uow, IMapper mapper) : base(uow, mapper)
+        public PersonneService(IUnitOfWork<SqliteContext> uow, IUnitOfWork<LogContext> logUnitOfWork, IMapper mapper) : base(uow, logUnitOfWork, mapper)
         {
-            _personneRepo = unitOfWork.GetRepository<Personne>();
+            _personneRepo = unitOfWorkSqlite.GetRepository<Personne>();
+            _logRepo = unitOfWorkLog.GetRepository<Log>();
         }
 
         public IEnumerable<PersonneDTO> GetAll()
@@ -40,9 +45,14 @@ namespace StarterKitAPI.Services
 
         public void Create(PersonneDTO user)
         {
+            
+            Log log = new Log() { Data = JsonSerializer.Serialize(user), ErrorMessage = "Pas d'erreur", Id = Thread.CurrentThread.ManagedThreadId, ThreadId = "psdjfpodfjs" };
+            _logRepo.Add(log);
+            unitOfWorkLog.Save();
+
             Personne personne = _mapper.Map<Personne>(user);
             _personneRepo.Add(personne);
-            unitOfWork.Save();
+            unitOfWorkSqlite.Save();
         }
 
         public void Update(PersonneDTO dto)

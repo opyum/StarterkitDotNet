@@ -14,7 +14,8 @@ namespace ServiceTest
             var services = new ServiceCollection();
             services.AddDbContext<SqliteContext>(options =>
              options.UseSqlite("Data Source=.;Initial Catalog=RmConfig;Integrated Security=True"));
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork<SqliteContext>, UnitOfWork<SqliteContext>>();
+            services.AddScoped<IUnitOfWork<LogContext>, UnitOfWork<LogContext>>();
             services.AddTransient<IPersonneService, PersonneService>();
             services.AddAutoMapper(typeof(PersonneProfile));
         }

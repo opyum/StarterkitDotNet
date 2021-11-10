@@ -1,4 +1,5 @@
-﻿using DataAccessLayer.UnifOfWork;
+﻿using DataAccessLayer.Context;
+using DataAccessLayer.UnifOfWork;
 using Microsoft.Extensions.DependencyInjection;
 using StarterKitAPI.Services;
 using System;
@@ -12,7 +13,8 @@ namespace StarterKitAPI.Injection
     {
         public static void SetInjection(IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<IUnitOfWork<SqliteContext>, UnitOfWork<SqliteContext>>();
+            services.AddScoped<IUnitOfWork<LogContext>, UnitOfWork<LogContext>>();
             services.AddTransient<IPersonneService, PersonneService>();
         
         }

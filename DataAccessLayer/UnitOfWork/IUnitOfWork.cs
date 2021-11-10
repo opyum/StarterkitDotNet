@@ -1,20 +1,18 @@
-﻿using DataAccessLayer.Context;
-using Microsoft.EntityFrameworkCore;
+﻿using Commun.Enums;
+using DataAccessLayer.Context;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace DataAccessLayer.UnifOfWork
 {
     // Dans cet article, les commentaires sont présents dans l'Interface mais ne le seront pas dans son implémentation
-    public interface IUnitOfWork : IDisposable
+    public interface IUnitOfWork<TContext> : IDisposable
     {
         /// <summary>
         /// Gets the db context.
         /// </summary>
         /// <returns>The instance of type TContext.</returns>
-        SqliteContext DbContext { get; }
+        TContext DbContext { get; }
 
         /// <summary>
         /// Gets the specified repository for the TEntity.

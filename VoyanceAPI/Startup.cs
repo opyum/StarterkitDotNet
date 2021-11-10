@@ -28,7 +28,9 @@ namespace StarterKitAPI
             //services.AddDbContext<SqliteContext>(options =>
             // options.UseSqlite(Configuration.GetConnectionString("CnxString")));
             services.AddEntityFrameworkSqlite().AddDbContext<SqliteContext>(options =>
-                options.UseSqlite(Configuration.GetConnectionString("bdd")));
+                options.UseSqlite(Configuration.GetConnectionString("bdd")));           
+            services.AddEntityFrameworkSqlite().AddDbContext<LogContext>(options =>
+                options.UseSqlite(Configuration.GetConnectionString("LogDB")));
             services.AddAutoMapper(typeof(PersonneProfile));
 
             //var serviceProvider = services.BuildServiceProvider();
@@ -58,7 +60,9 @@ namespace StarterKitAPI
             using (var serviceScope = app.ApplicationServices.GetService<IServiceScopeFactory>().CreateScope())
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<SqliteContext>();
+                var logContext = serviceScope.ServiceProvider.GetRequiredService<LogContext>();
                 context.Database.EnsureCreated();
+                logContext.Database.EnsureCreated();
             }
             //app.UseAuthentication();
             //app.UseAuthorization();
