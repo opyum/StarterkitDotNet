@@ -1,19 +1,19 @@
 ﻿using AutoMapper;
 using DataAccessLayer.Context;
 using DataAccessLayer.UnifOfWork;
+using Microsoft.EntityFrameworkCore;
 
 namespace StarterKitAPI.Services
 {
-    public class BaseService
+    public class BaseService<TContext> where TContext : DbContext
     {
-        public IUnitOfWork<SqliteContext> unitOfWorkSqlite { get; set; }
-        public IUnitOfWork<LogContext> unitOfWorkLog { get; set; }
+        public IUnitOfWork<TContext> unitOfWork { get; set; }
+
         protected readonly IMapper _mapper;
 
-        public BaseService(IUnitOfWork<SqliteContext> uow, IUnitOfWork<LogContext> logUnitOfWork, IMapper mapper)
+        public BaseService(IUnitOfWork<TContext> uow, IMapper mapper)
         {
-            unitOfWorkSqlite = uow;
-            unitOfWorkLog = logUnitOfWork;
+            unitOfWork = uow;
             _mapper = mapper;
         }
 

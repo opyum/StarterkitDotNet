@@ -21,7 +21,7 @@ namespace DataAccessLayer.Context
         {
             modelBuilder.Entity<Log>(entity =>
             {
-                entity.Property(e => e.Id).ValueGeneratedNever();
+                entity.Property(e => e.Id).ValueGeneratedOnAdd();
             });
 
 

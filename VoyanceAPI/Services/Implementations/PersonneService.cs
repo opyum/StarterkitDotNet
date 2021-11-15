@@ -1,11 +1,14 @@
 ﻿using AutoMapper;
+using Commun.Enums;
 using DataAccessLayer;
 using DataAccessLayer.Context;
 using DataAccessLayer.Entity;
 using DataAccessLayer.UnifOfWork;
 using DTOs;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using StarterKitAPI.Attributes;
 using StarterKitAPI.Extension;
 using System;
 using System.Collections.Generic;
@@ -19,15 +22,15 @@ using System.Threading;
 
 namespace StarterKitAPI.Services
 {
-    public class PersonneService : BaseService, IPersonneService
+    public class PersonneService : BaseService<SqliteContext>, IPersonneService
     {
         private IGenericRepository<Personne> _personneRepo { get; set; }
-        private IGenericRepository<Log> _logRepo { get; set; }
+        private ILogService _logService { get; set; }
 
-        public PersonneService(IUnitOfWork<SqliteContext> uow, IUnitOfWork<LogContext> logUnitOfWork, IMapper mapper) : base(uow, logUnitOfWork, mapper)
+        public PersonneService(IUnitOfWork<SqliteContext> uow, IMapper mapper, ILogService logService) : base(uow, mapper)
         {
-            _personneRepo = unitOfWorkSqlite.GetRepository<Personne>();
-            _logRepo = unitOfWorkLog.GetRepository<Log>();
+            _personneRepo = unitOfWork.GetRepository<Personne>();
+            _logService = logService;
         }
 
         public IEnumerable<PersonneDTO> GetAll()
@@ -41,18 +44,21 @@ namespace StarterKitAPI.Services
             throw new NotImplementedException();
         }
 
-
-
-        public void Create(PersonneDTO user)
+        public void CreatePersonne(PersonneDTO user)
         {
-            
-            Log log = new Log() { Data = JsonSerializer.Serialize(user), ErrorMessage = "Pas d'erreur", Id = Thread.CurrentThread.ManagedThreadId, ThreadId = "psdjfpodfjs" };
-            _logRepo.Add(log);
-            unitOfWorkLog.Save();
+            try
+            {
+                _logService.CreateLog(SeverityEnum.INFORMATION, user, "Debut d'appel");
 
-            Personne personne = _mapper.Map<Personne>(user);
-            _personneRepo.Add(personne);
-            unitOfWorkSqlite.Save();
+                Personne personne = _mapper.Map<Personne>(user);
+                _personneRepo.Add(personne);
+                unitOfWork.Save();
+            }
+            catch (Exception e)
+            {
+                _logService.CreateLog(SeverityEnum.ERROR, user, e.Message + " " + e.InnerException);
+            }
+
         }
 
         public void Update(PersonneDTO dto)

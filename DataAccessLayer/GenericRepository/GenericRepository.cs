@@ -30,6 +30,11 @@ namespace DataAccessLayer
             return entry.Entity;
         }
 
+        public virtual void AddAsync(TEntity entity)
+        {
+            _dbSet.AddAsync(entity);
+        }
+
         public virtual void Add(IEnumerable<TEntity> entities) => _dbSet.AddRange(entities);
         #endregion
 

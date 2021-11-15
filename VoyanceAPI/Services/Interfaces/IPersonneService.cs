@@ -11,7 +11,7 @@ namespace StarterKitAPI.Services
 
         IEnumerable<PersonneDTO> GetAll();
         PersonneDTO GetById(int id);
-        void Create(PersonneDTO user);
+        void CreatePersonne(PersonneDTO user);
         void Update(PersonneDTO dto);
         void Delete(int idAppli);
     }

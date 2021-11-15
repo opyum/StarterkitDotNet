@@ -1,6 +1,4 @@
-﻿using Commun.Enums;
-using DataAccessLayer.Context;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace DataAccessLayer.UnifOfWork

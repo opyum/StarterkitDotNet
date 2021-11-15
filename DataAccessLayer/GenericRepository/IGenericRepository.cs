@@ -20,6 +20,9 @@ namespace DataAccessLayer
         /// </summary>
         /// <param name="entities">The entities to insert.</param>
         void Add(IEnumerable<TEntity> entities);
+
+        void AddAsync(TEntity entity);
+
         #endregion
         #region READ
         /// <summary>

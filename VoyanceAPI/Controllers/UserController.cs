@@ -3,6 +3,7 @@ using DTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using StarterKitAPI.Attributes;
 using StarterKitAPI.Services;
 using System.Collections.Generic;
 
@@ -40,7 +41,7 @@ namespace StarterKitAPI.Controllers
         [Route(ApiRouteConst.GENERIC_CREATE)]
         public IActionResult Create(PersonneDTO User)
         {
-            UserService.Create(User);
+            UserService.CreatePersonne(User);
             return Ok();
         }     
         

@@ -24,7 +24,6 @@ namespace StarterKitAPI
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-
             //services.AddDbContext<SqliteContext>(options =>
             // options.UseSqlite(Configuration.GetConnectionString("CnxString")));
             services.AddEntityFrameworkSqlite().AddDbContext<SqliteContext>(options =>
@@ -61,11 +60,21 @@ namespace StarterKitAPI
             {
                 var context = serviceScope.ServiceProvider.GetRequiredService<SqliteContext>();
                 var logContext = serviceScope.ServiceProvider.GetRequiredService<LogContext>();
+
+                //A supprimer plus tard
+                context.Database.EnsureDeleted();
+                logContext.Database.EnsureDeleted();
+                //----//
+
                 context.Database.EnsureCreated();
                 logContext.Database.EnsureCreated();
             }
             //app.UseAuthentication();
             //app.UseAuthorization();
+            var builder = new ConfigurationBuilder()
+              .SetBasePath(env.ContentRootPath)
+              .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
+
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
