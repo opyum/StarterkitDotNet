@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using StarterKitAPI.Profile;
 using StarterKitAPI.Services;
+using System;
 using System.Configuration;
 
 namespace ServiceTest
@@ -14,6 +15,8 @@ namespace ServiceTest
     {
 
         public IPersonneService personneService { get; set; }
+
+        public IServiceProvider provider { get; set; }
         public InitTest()
         {
 
@@ -33,7 +36,8 @@ namespace ServiceTest
             services.AddTransient<ILogService, LogService>();
             services.AddAutoMapper(typeof(PersonneProfile));
 
-            var builder = services.BuildServiceProvider();
+            ServiceProvider builder = services.BuildServiceProvider();
+            provider = builder;
             personneService = builder.GetService<IPersonneService>();
         }
     }

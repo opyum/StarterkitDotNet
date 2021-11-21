@@ -13,10 +13,10 @@ namespace StarterKitAPI.Injection
     {
         public static void SetInjection(IServiceCollection services)
         {
-            services.AddScoped<IUnitOfWork<SqliteContext>, UnitOfWork<SqliteContext>>();
-            services.AddScoped<IUnitOfWork<LogContext>, UnitOfWork<LogContext>>();
+            services.AddTransient<IUnitOfWork<SqliteContext>, UnitOfWork<SqliteContext>>();
+            services.AddTransient<IUnitOfWork<LogContext>, UnitOfWork<LogContext>>();
             services.AddTransient<IPersonneService, PersonneService>();
-            services.AddTransient<ILogService, LogService>();
+            services.AddScoped<ILogService, LogService>();
         
         }
     }

@@ -1,6 +1,7 @@
 ﻿using Commun.Constantes;
 using DTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using StarterKitAPI.Attributes;
@@ -39,10 +40,16 @@ namespace StarterKitAPI.Controllers
 
         [HttpPost]
         [Route(ApiRouteConst.GENERIC_CREATE)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public IActionResult Create(PersonneDTO User)
         {
-            UserService.CreatePersonne(User);
-            return Ok();
+            if (true)
+            {
+                return BadRequest(new { error = "Ca marche pas " });
+            }
+            var newUser = UserService.CreatePersonne(User);
+            return CreatedAtAction(nameof(Create), User, newUser);
         }     
         
         

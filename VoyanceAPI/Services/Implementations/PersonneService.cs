@@ -44,19 +44,24 @@ namespace StarterKitAPI.Services
             throw new NotImplementedException();
         }
 
-        public void CreatePersonne(PersonneDTO user)
+        public MessageObjectDTO<PersonneDTO> CreatePersonne(PersonneDTO user)
         {
+            MessageObjectDTO<PersonneDTO> retour = new MessageObjectDTO<PersonneDTO>();
             try
             {
                 _logService.CreateLog(SeverityEnum.INFORMATION, user, "Debut d'appel");
 
                 Personne personne = _mapper.Map<Personne>(user);
-                _personneRepo.Add(personne);
+                retour.Object = _mapper.Map<PersonneDTO>(_personneRepo.Add(personne));
                 unitOfWork.Save();
+
+                
+                return retour;
             }
             catch (Exception e)
             {
                 _logService.CreateLog(SeverityEnum.ERROR, user, e.Message + " " + e.InnerException);
+                throw e;
             }
 
         }

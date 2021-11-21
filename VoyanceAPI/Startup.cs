@@ -7,6 +7,7 @@ using StarterKitAPI.Profile;
 using Microsoft.Identity.Web;
 using DataAccessLayer.Context;
 using Microsoft.EntityFrameworkCore;
+using DotnetApplication.Api;
 
 namespace StarterKitAPI
 {
@@ -46,8 +47,8 @@ namespace StarterKitAPI
             {
                 app.UseDeveloperExceptionPage();
             }
-            //app.UseRequestResponseLogging();
 
+            app.UseMiddleware<HttpRequestBodyMiddleware>();
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 
